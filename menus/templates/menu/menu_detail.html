@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ menu.nom }}</h1>
+<p class="lead">Servi le {{ menu.date_service|date:"d/m/Y" }}</p>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Coût total : {{ menu.calculer_cout_total|floatformat:2 }} TND</h5>
+    </div>
+</div>
+
+<h3>Plats</h3>
+<ul class="list-group mb-4">
+    {% for plat in menu.plats.all %}
+    <li class="list-group-item">
+        <h5>{{ plat.nom }}</h5>
+        <p>{{ plat.description|truncatewords:20 }}</p>
+        <a href="{% url 'plat-detail' plat.pk %}" class="btn btn-sm btn-outline-info">Détails</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'menu-update' menu.pk %}" class="btn btn-warning">Modifier</a>
+<a href="{% url 'menu-list' %}" class="btn btn-secondary">Retour</a>
+{% endblock %}

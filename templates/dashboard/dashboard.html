@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Tableau de Bord</h1>
+
+    <!-- Cards Stats -->
+    <div class="row mb-4 g-3">  <!-- Added gutter spacing with g-3 -->
+        <!-- Carte Alertes Stock -->
+        <div class="col-xl-2 col-md-4 col-sm-6">  <!-- Responsive grid -->
+            <div class="card dashboard-card text-white bg-danger">  <!-- Changed to danger for alerts -->
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-exclamation-triangle fs-1"></i>  <!-- Larger icon -->
+                    </div>
+                    <h5 class="card-title mb-1">Alertes Stock</h5>
+                    <h2 class="mb-2">{{ stock_alert_count }}</h2>
+                    <a href="{% url 'stock:list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Voir détails
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Carte Menus -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="card dashboard-card text-white bg-primary">
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-book fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-1">Menus</h5>
+                    <h2 class="mb-2">{{ total_menus }}</h2>
+                    <a href="{% url 'menu-list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Voir tous
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Carte Plats -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="card dashboard-card text-white bg-success">
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-egg-fried fs-1"></i>  <!-- Changed to egg-fried -->
+                    </div>
+                    <h5 class="card-title mb-1">Plats</h5>
+                    <h2 class="mb-2">{{ total_plats }}</h2>
+                    <a href="{% url 'plat-list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Voir tous
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Carte Recettes -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="card dashboard-card text-white bg-info">
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-journal-bookmark fs-1"></i>  <!-- More relevant icon -->
+                    </div>
+                    <h5 class="card-title mb-1">Recettes</h5>
+                    <h2 class="mb-2">{{ total_recettes }}</h2>
+                    <a href="{% url 'recette-list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Voir toutes
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Carte Ingrédients -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="card dashboard-card text-white bg-warning">
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-basket2 fs-1"></i>  <!-- Better ingredient icon -->
+                    </div>
+                    <h5 class="card-title mb-1">Ingrédients</h5>
+                    <h2 class="mb-2">{{ total_ingredients }}</h2>
+                    <a href="{% url 'ingredients:list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Voir tous
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Nouvelle carte Coût Moyen -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="card dashboard-card text-white" style="background-color: #6c5ce7;">  <!-- Purple color -->
+                <div class="card-body text-center">
+                    <div class="card-icon mb-2">
+                        <i class="bi bi-cash-coin fs-1"></i>
+                    </div>
+                    <h5 class="card-title mb-1">Coût Moyen</h5>
+                    <h2 class="mb-2">{{ cout_moyen_recette|default:"0" }}TND</h2>
+                    <a href="{% url 'recette-list' %}" class="btn btn-sm btn-outline-light stretched-link">
+                        Analyser
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Section Alertes Stock -->
+        <div class="card mb-4 border-warning">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Alertes Stock</h5>
+            </div>
+            <div class="card-body">
+                {% if stock_alertes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ingrédient</th>
+                                <th>Stock Actuel</th>
+                                <th>Seuil Minimum</th>
+                                <th>Déficit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stock_alertes %}
+                            <tr class="{% if stock.quantite <= 0 %}table-danger{% else %}table-warning{% endif %}">
+                                <td>{{ stock.ingredient.nom }}</td>
+                                <td>{{ stock.quantite }} {{ stock.ingredient.unite_mesure }}</td>
+                                <td>{{ stock.seuil_alerte }}</td>
+                                <td>
+                                    <!-- calcule pour alert -->
+                                    {% if stock.deficit > 0 %}
+                                        <span class="text-danger">{{ stock.deficit|floatformat:2 }}</span>
+                                    {% else %}
+                                        <span class="text-success">0</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'stock:detail' stock.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Gérer</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> Aucune alerte de stock pour le moment
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    <!-- Recent Menus -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5><i class="bi bi-calendar-event"></i> Derniers Menus</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Date</th>
+                            <th>Nombre de Plats</th>
+                            <th>Coût Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for menu in recent_menus %}
+                        <tr>
+                            <td>{{ menu.nom }}</td>
+                            <td>{{ menu.date_service|date:"d/m/Y" }}</td>
+                            <td>{{ menu.plats.count }}</td>
+                            <td>{{ menu.cout_total|floatformat:2 }} TND</td>
+                            <td>
+                                <a href="{% url 'menu-detail' menu.pk %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Plats -->
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="bi bi-egg-fried"></i> Derniers Plats Préparés</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for plat in recent_plats %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ plat.nom }}</h5>
+                            <p class="card-text">
+                                <span class="badge bg-secondary">{{ plat.get_type_plat_display }}</span>
+                                <br>Recette: {{ plat.recette.nom }}
+                                <br>Ingrédients: 
+                                {% for comp in plat.recette.compositionrecette.all %}  <!-- Champ corrigé -->
+                                    {{ comp.ingredient.nom }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

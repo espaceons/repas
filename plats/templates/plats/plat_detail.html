@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ plat.nom }}</h1>
+<p class="lead">{{ plat.description }}</p>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Informations</h5>
+        <p><strong>Type :</strong> {{ plat.get_type_plat_display }}</p>
+        <p><strong>Portions :</strong> {{ plat.nombre_portions }}</p>
+        <p><strong>Coût total :</strong> {{ plat.calculer_cout_total|floatformat:2 }} TND</p>
+        <p><strong>Coût par portion :</strong> {{ plat.cout_par_portion|floatformat:2 }} TND</p>
+    </div>
+</div>
+
+<h3>Ingrédients</h3>
+<ul class="list-group mb-4">
+    {% for comp in plat.platingredient_set.all %}
+    <li class="list-group-item">
+        {{ comp.ingredient.nom }} - 
+        {{ comp.quantite }} {{ comp.ingredient.get_unite_mesure_display }}
+        ({{ comp.ingredient.prix_unitaire }} €/unité)
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'plat-update' plat.pk %}" class="btn btn-warning">Modifier</a>
+<a href="{% url 'plat-list' %}" class="btn btn-secondary">Retour</a>
+{% endblock %}

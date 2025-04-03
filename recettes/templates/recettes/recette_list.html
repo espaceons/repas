@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mb-4">Liste des Recettes</h1>
+<a href="{% url 'recette-create' %}" class="btn btn-success mb-3">Ajouter une Recette</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Temps (min)</th>
+            <th>Coût Total</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for recette in recettes %}
+        <tr>
+            <td>{{ recette.nom }}</td>
+            <td>{{ recette.temps_preparation }}</td>
+            <td>{{ recette.cout_total|floatformat:2 }} TND</td>
+            <td>
+                <a href="{% url 'recette-detail' recette.pk %}" class="btn btn-info btn-sm">Voir</a>
+                <a href="{% url 'recette-update' recette.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="{% url 'recette-delete' recette.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

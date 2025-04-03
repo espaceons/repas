@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="mb-4">Liste des Menus</h1>
+<a href="{% url 'menu-create' %}" class="btn btn-success mb-3">Créer un Menu</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Date</th>
+            <th>Nombre de Plats</th>
+            <th>Coût Total</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for menu in menus %}
+        <tr>
+            <td>{{ menu.nom }}</td>
+            <td>{{ menu.date_service|date:"d/m/Y" }}</td>
+            <td>{{ menu.plats.count }}</td>
+            <td>{{ menu.calculer_cout_total|floatformat:2 }} TND</td>
+            <td>
+                <a href="{% url 'menu-detail' menu.pk %}" class="btn btn-info btn-sm">Voir</a>
+                <a href="{% url 'menu-update' menu.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="{% url 'menu-delete' menu.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-box-seam"></i> Détails du Stock
+        </h1>
+        <a href="{% url 'stock:list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <!-- Messages -->
+    {% include 'stock/messages.html' %}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        {{ stock.ingredient.nom }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Ingrédient</label>
+                                <input type="text" class="form-control" 
+                                       value="{{ stock.ingredient.nom }}" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Unité</label>
+                                <input type="text" class="form-control" 
+                                       value="{{ stock.ingredient.unite_mesure }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.quantite.label_tag }}
+                            {{ form.quantite }}
+                            {% if form.quantite.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.quantite.errors|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.seuil_alerte.label_tag }}
+                            {{ form.seuil_alerte }}
+                            {% if form.seuil_alerte.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.seuil_alerte.errors|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Enregistrer
+                            </button>
+                            
+                            <a href="{% url 'stock:delete' stock.pk %}" 
+                               class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-graph-up"></i> Statistiques
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-{% if stock.quantite <= stock.seuil_alerte %}warning{% else %}success{% endif %}">
+                        <strong>Statut :</strong> 
+                        {% if stock.quantite <= stock.seuil_alerte %}
+                            <i class="bi bi-exclamation-triangle"></i> Alerte Stock
+                        {% else %}
+                            <i class="bi bi-check-circle"></i> Stock OK
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <h5>Déficit actuel :</h5>
+                        {% if deficit > 0 %}
+                            <span class="text-danger">{{ deficit|floatformat:2 }} {{ stock.ingredient.unite_mesure }}</span>
+                        {% else %}
+                            <span class="text-success">Aucun déficit</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="progress mb-4">
+                        <div class="progress-bar 
+                            {% if stock.quantite <= stock.seuil_alerte %}bg-danger
+                            {% else %}bg-success{% endif %}" 
+                            role="progressbar" >  <!-- Garantit une largeur minimale pour visibilité -->
+                            {{ pourcentage_stock|floatformat:0 }}%  <!-- Affiche le pourcentage dans la barre -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

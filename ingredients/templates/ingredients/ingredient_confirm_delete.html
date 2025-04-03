@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Supprimer un ingrédient</h1>
+    <p>Êtes-vous sûr de vouloir supprimer {{ ingredient.nom }} ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Oui, supprimer</button>
+        <button onclick="history.back()">Annuler</button>
+    </form>
+    {% endblock %}

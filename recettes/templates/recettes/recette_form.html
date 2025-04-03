@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% if object %}Modifier{% else %}Créer{% endif %} une Recette</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <h3 class="mt-4">Ingrédients</h3>
+    {{ compositions.management_form }}
+    <div id="ingredients-formset">
+        {% for form in compositions %}
+        <div class="ingredient-form mb-3 p-3 border rounded">
+            {{ form.as_table }}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+    <a href="{% if object %}{% url 'recette-detail' object.pk %}{% else %}{% url 'recette-list' %}{% endif %}" class="btn btn-secondary mt-3">Annuler</a>
+</form>
+
+<style>
+    .ingredient-form { background-color: #f8f9fa; }
+</style>
+{% endblock %}

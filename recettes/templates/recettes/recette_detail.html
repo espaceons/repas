@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ recette.nom }}</h1>
+<p class="lead">{{ recette.description }}</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informations</h5>
+                <p><strong>Temps :</strong> {{ recette.temps_preparation }} minutes</p>
+                <p><strong>Coût total :</strong> {{ recette.cout_total|floatformat:2 }} TND</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Ingrédients</h3>
+<ul class="list-group mb-4">
+    {% for comp in recette.ingredients.all %}
+    <li class="list-group-item">
+        {{ comp.ingredient.nom }} - 
+        {{ comp.quantite }} {{ comp.ingredient.get_unite_mesure_display }}
+        ({{ comp.ingredient.prix_unitaire }} TND/unité)
+    </li>
+    {% endfor %}
+</ul>
+
+<h3>Instructions</h3>
+<div class="card mb-4">
+    <div class="card-body">
+        {{ recette.instructions|linebreaks }}
+    </div>
+</div>
+
+<a href="{% url 'recette-update' recette.pk %}" class="btn btn-warning">Modifier</a>
+<a href="{% url 'recette-list' %}" class="btn btn-secondary">Retour</a>
+{% endblock %}

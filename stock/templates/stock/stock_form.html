@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {% if object %}Modifier{% else %}Ajouter{% endif %} un Stock
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Enregistrer
+                </button>
+                <a href="{% url 'stock:list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

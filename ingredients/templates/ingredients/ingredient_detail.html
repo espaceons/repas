@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-basket text-primary"></i> Détails de l'ingrédient
+        </h1>
+        <div>
+            <a href="{% url 'ingredients:update' object.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            <a href="{% url 'ingredients:list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ object.nom }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Prix unitaire:</strong> {{ object.prix_unitaire }} €
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Unité de mesure:</strong> {{ object.get_unite_mesure_display }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-book"></i> Recettes utilisant cet ingrédient
+            </h6>
+        </div>
+        <div class="card-body">
+            {% if object.compositionrecette_set.all %}
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Recette</th>
+                            <th>Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for composition in object.compositionrecette_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'recette:detail' composition.recette.pk %}">
+                                    {{ composition.recette.nom }}
+                                </a>
+                            </td>
+                            <td>{{ composition.quantite }} {{ object.unite_mesure }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">Cet ingrédient n'est utilisé dans aucune recette</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
