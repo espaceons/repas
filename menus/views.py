@@ -2,6 +2,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy
 from django.db.models import Prefetch
 
+from menus.forms import MenuPlatsForm
 from plats.models import Plat
 from recettes.models import CompositionRecette
 from .models import Menu, MenuPlat
@@ -28,8 +29,9 @@ class MenuDetailView(DetailView):
 # Création d'un menu
 class MenuCreateView(CreateView):
     model = Menu
+    form_class = MenuPlatsForm
     template_name = 'menu/menu_form.html'
-    fields = ['nom', 'date_service']
+    #fields = ['nom', 'date_service']
     success_url = reverse_lazy('menu-list')
     
     def get_context_data(self, **kwargs):
@@ -60,8 +62,9 @@ MenuPlatFormSet = inlineformset_factory(
 # Modification d'un menu
 class MenuUpdateView(UpdateView):
     model = Menu
+    form_class = MenuPlatsForm
     template_name = 'menu/menu_form.html'
-    fields = ['nom', 'date_service']
+    #fields = ['nom', 'date_service']
     success_url = reverse_lazy('menu-list')
 
 # Suppression d'un menu
